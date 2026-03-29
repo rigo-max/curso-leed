@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diseño y Construcción Sostenible LEED — Curso Especializado</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0f0a; --surface:#0e160e; --surface2:#131d13;
+  --border:#1a2e1a; --accent:#6aab7a; --accent2:#c9a84c;
+  --accent3:#4a9e6a; --accent4:#a8d5b5;
+  --text:#e8f0e8; --text-dim:#8aaa8a; --text-muted:#4a6a4a;
+  --amber:#e8b84b; --glow:rgba(106,171,122,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── VOICE BAR ─────────────────────────────────── */
+.voice-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#060d06;border-top:1px solid var(--border);
+  padding:10px 24px;display:flex;align-items:center;gap:14px;
+  z-index:1000;box-shadow:0 -4px 24px rgba(0,0,0,.6);
+}
+.voice-icon{font-size:20px;}
+.voice-icon.speaking{animation:speakPulse .8s infinite alternate;}
+@keyframes speakPulse{from{transform:scale(1);filter:brightness(1);}to{transform:scale(1.2);filter:brightness(1.6);}}
+.voice-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;min-width:80px;}
+.voice-preview{flex:1;font-size:12px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic;}
+.voice-controls{display:flex;align-items:center;gap:8px;}
+.voice-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--text-dim);font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+.voice-btn:hover{border-color:var(--accent);color:var(--accent);}
+.voice-btn.active{background:rgba(106,171,122,.15);border-color:var(--accent);color:var(--accent);}
+.voice-btn.stop-btn:hover{border-color:var(--amber);color:var(--amber);}
+.voice-speed{display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);}
+.voice-speed input[type=range]{width:70px;accent-color:var(--accent);}
+.voice-toggle{background:none;border:1px solid var(--border);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:14px;transition:all .2s;}
+.voice-toggle:hover{border-color:var(--amber);color:var(--amber);}
+
+/* ── HERO ──────────────────────────────────────── */
+.hero{position:relative;padding:90px 40px 70px;text-align:center;overflow:hidden;border-bottom:1px solid var(--border);}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(106,171,122,.1) 0%,transparent 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-60px;right:10%;width:400px;height:400px;background:radial-gradient(ellipse,rgba(201,168,76,.06) 0%,transparent 70%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(106,171,122,.1);border:1px solid rgba(106,171,122,.3);border-radius:100px;padding:6px 20px;font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;}
+.hero-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(36px,5.5vw,70px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:18px;}
+.hero h1 .green{color:var(--accent);}
+.hero h1 .gold{color:var(--amber);}
+.hero-sub{font-size:16px;color:var(--text-dim);max-width:600px;margin:0 auto 44px;line-height:1.75;}
+.hero-stats{display:flex;justify-content:center;gap:44px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-num{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--amber);display:block;}
+.stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-family:'Space Mono',monospace;}
+
+/* ── LAYOUT ────────────────────────────────────── */
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 280px);}
+
+/* ── SIDEBAR ───────────────────────────────────── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.sidebar-title{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;padding:0 20px 16px;border-bottom:1px solid var(--border);margin-bottom:6px;}
+.sidebar-section{font-family:'Space Mono',monospace;font-size:9px;color:rgba(74,106,74,.55);letter-spacing:3px;text-transform:uppercase;padding:12px 20px 4px;}
+.module-nav{list-style:none;}
+.module-btn{width:100%;background:none;border:none;text-align:left;padding:10px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;border-left:3px solid transparent;}
+.module-btn:hover{background:var(--surface2);}
+.module-btn.active{background:var(--glow);border-left-color:var(--amber);}
+.module-btn.active .mod-num{color:var(--amber);}
+.module-btn.active .mod-name{color:var(--text);}
+.mod-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);min-width:28px;}
+.mod-name{font-size:13px;color:var(--text-dim);line-height:1.3;font-weight:500;}
+.mod-tag{margin-left:auto;font-size:9px;padding:2px 7px;border-radius:100px;font-family:'Space Mono',monospace;flex-shrink:0;}
+.tag-bas{background:rgba(106,171,122,.15);color:var(--accent);}
+.tag-int{background:rgba(74,158,106,.18);color:#5cc48a;}
+.tag-adv{background:rgba(201,168,76,.15);color:var(--accent2);}
+.tag-dip{background:rgba(232,184,75,.2);color:var(--amber);}
+.tag-mas{background:var(--amber);color:#0a0f0a;font-weight:700;}
+
+/* ── MAIN ──────────────────────────────────────── */
+.main{padding:44px 52px;max-width:920px;padding-bottom:100px;}
+.module-content{display:none;animation:fadeIn .35s ease;}
+.module-content.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── MOD HEADER ────────────────────────────────── */
+.mod-header{margin-bottom:40px;padding-bottom:32px;border-bottom:1px solid var(--border);}
+.mod-eyebrow{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.level-pill{font-size:9px;padding:3px 10px;border-radius:20px;font-family:'Space Mono',monospace;letter-spacing:2px;text-transform:uppercase;}
+.pill-bas{background:rgba(106,171,122,.2);color:var(--accent);}
+.pill-int{background:rgba(74,158,106,.2);color:#5cc48a;}
+.pill-adv{background:rgba(201,168,76,.2);color:var(--accent2);}
+.pill-dip{background:rgba(232,184,75,.2);color:var(--amber);}
+.pill-mas{background:var(--amber);color:#0a0f0a;font-weight:700;}
+.mod-title{font-family:'Syne',sans-serif;font-size:clamp(24px,3.5vw,40px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;color:var(--text);}
+.mod-desc{color:var(--text-dim);font-size:15px;line-height:1.8;max-width:720px;}
+
+/* ── SECTION TITLE ─────────────────────────────── */
+h2.section{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin:38px 0 18px;color:var(--text);display:flex;align-items:center;gap:10px;}
+h2.section::after{content:'';flex:1;height:1px;background:var(--border);}
+p.body{font-size:14px;color:var(--text-dim);line-height:1.85;margin-bottom:18px;}
+
+/* ── CARDS ─────────────────────────────────────── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:24px 0;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;transition:all .25s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--card-accent,var(--accent));opacity:0;transition:opacity .25s;}
+.card:hover{border-color:rgba(106,171,122,.3);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.card:hover::before{opacity:1;}
+.card-icon{font-size:28px;margin-bottom:12px;display:block;}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:8px;color:var(--text);}
+.card-text{font-size:13px;color:var(--text-dim);line-height:1.65;}
+
+/* ── STEPS ─────────────────────────────────────── */
+.steps{counter-reset:step;margin:22px 0;}
+.step{display:flex;gap:16px;margin-bottom:22px;}
+.step::before{counter-increment:step;content:counter(step);min-width:32px;height:32px;background:rgba(106,171,122,.1);border:1px solid rgba(106,171,122,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);font-weight:700;flex-shrink:0;margin-top:2px;}
+.step-body{flex:1;}
+.step-title{font-weight:600;font-size:14px;margin-bottom:6px;color:var(--text);}
+.step-text{font-size:13px;color:var(--text-dim);line-height:1.75;}
+
+/* ── TABLE ─────────────────────────────────────── */
+.table-wrap{overflow-x:auto;margin:22px 0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--surface);padding:12px 16px;text-align:left;font-family:'Space Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--border);}
+td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-dim);line-height:1.5;}
+td strong{color:var(--accent);font-size:12px;font-family:'Space Mono',monospace;}
+tr:hover td{background:rgba(255,255,255,.02);}
+
+/* ── TIP BOX ───────────────────────────────────── */
+.tip{display:flex;gap:14px;background:rgba(106,171,122,.07);border:1px solid rgba(106,171,122,.2);border-radius:10px;padding:18px 20px;margin:22px 0;}
+.tip.gold{background:rgba(201,168,76,.07);border-color:rgba(201,168,76,.25);}
+.tip.gold .tip-label{color:var(--amber);}
+.tip-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.tip-body .tip-label{display:block;font-size:12px;color:var(--accent);margin-bottom:5px;font-family:'Space Mono',monospace;letter-spacing:1px;font-weight:700;}
+.tip-body p{font-size:13px;color:var(--text-dim);line-height:1.7;margin:0;}
+
+/* ── HIGHLIGHT ─────────────────────────────────── */
+.highlight{background:linear-gradient(135deg,rgba(106,171,122,.07),rgba(201,168,76,.07));border:1px solid rgba(106,171,122,.2);border-radius:12px;padding:24px;margin:24px 0;}
+.highlight-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:10px;}
+.highlight.gold{border-color:rgba(201,168,76,.25);background:linear-gradient(135deg,rgba(201,168,76,.07),rgba(106,171,122,.04));}
+.highlight.gold .highlight-title{color:var(--amber);}
+.highlight p{font-size:14px;color:var(--text-dim);line-height:1.75;margin:0;}
+
+/* ── TAGS ──────────────────────────────────────── */
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
+.tag-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--text-dim);font-family:'Space Mono',monospace;}
+
+/* ── CERT BANNER ───────────────────────────────── */
+.cert-banner{background:linear-gradient(135deg,#0a1a0a,#060d06);border:1px solid rgba(232,184,75,.35);border-radius:12px;padding:36px;margin:28px 0;text-align:center;position:relative;overflow:hidden;}
+.cert-banner::before{content:'🏆';position:absolute;font-size:140px;opacity:.04;right:-10px;top:50%;transform:translateY(-50%);}
+.cert-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--text);margin-bottom:10px;}
+.cert-subtitle{font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:18px;}
+.cert-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.cert-tag{font-size:11px;background:rgba(232,184,75,.15);color:var(--amber);padding:4px 14px;border-radius:20px;font-family:'Space Mono',monospace;}
+
+/* ── MOD NAV FOOTER ────────────────────────────── */
+.mod-nav-footer{display:flex;gap:12px;margin-top:52px;padding-top:26px;border-top:1px solid var(--border);}
+.nav-btn{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;color:var(--text-dim);font-family:'IBM Plex Sans',sans-serif;font-size:13px;}
+.nav-btn:hover{border-color:rgba(106,171,122,.4);color:var(--text);background:var(--glow);}
+.nav-btn.next{justify-content:flex-end;}
+.nav-btn .arrow{font-size:18px;color:var(--accent);}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ── RESPONSIVE ────────────────────────────────── */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{height:auto;position:static;border-right:none;border-bottom:1px solid var(--border);}
+  .main{padding:28px 20px 100px;}
+  .hero{padding:56px 20px 44px;}
+  .voice-speed{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-badge">Curso Especializado · Certificable · Perú 2025</div>
+  <h1>Diseño y Construcción<br><span class="green">Sostenible</span> <span class="gold">LEED</span></h1>
+  <p class="hero-sub">Del nivel básico al Máster internacional. Aprende LEED v4.1, simulación energética, materiales sostenibles, certificación y proyecto real aplicado a Latinoamérica.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">8</span><span class="stat-label">Módulos</span></div>
+    <div class="stat"><span class="stat-num">120h</span><span class="stat-label">Duración</span></div>
+    <div class="stat"><span class="stat-num">3</span><span class="stat-label">Certificados</span></div>
+    <div class="stat"><span class="stat-num">5</span><span class="stat-label">Niveles</span></div>
+  </div>
+</div>
+
+<!-- ══ LAYOUT ══════════════════════════════════════════════ -->
+<div class="layout">
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-title">Módulos del Curso</div>
+  <ul class="module-nav">
+    <div class="sidebar-section">Nivel Básico</div>
+    <li><button class="module-btn active" onclick="showModule(0)">
+      <span class="mod-num">01</span>
+      <span class="mod-name">Fundamentos del Diseño Sostenible</span>
+      <span class="mod-tag tag-bas">BÁS</span>
+    </button></li>
+
+    <div class="sidebar-section">Nivel Intermedio</div>
+    <li><button class="module-btn" onclick="showModule(1)">
+      <span class="mod-num">02</span>
+      <span class="mod-name">Diseño de Sitio Sostenible</span>
+      <span class="mod-tag tag-int">INT</span>
+    </button></li>
+    <li><button class="module-btn" onclick="showModule(2)">
+      <span class="mod-num">03</span>
+      <span class="mod-name">Eficiencia Hídrica</span>
+      <span class="mod-tag tag-int">INT</span>
+    </button></li>
+
+    <div class="sidebar-section">Nivel Avanzado</div>
+    <li><button class="module-btn" onclick="showModule(3)">
+      <span class="mod-num">04</span>
+      <span class="mod-name">Energía y Atmósfera</span>
+      <span class="mod-tag tag-adv">AVZ</span>
+    </button></li>
+    <li><button class="module-btn" onclick="showModule(4)">
+      <span class="mod-num">05</span>
+      <span class="mod-name">Materiales y Recursos</span>
+      <span class="mod-tag tag-adv">AVZ</span>
+    </button></li>
+
+    <div class="sidebar-section">Diplomado</div>
+    <li><button class="module-btn" onclick="showModule(5)">
+      <span class="mod-num">06</span>
+      <span class="mod-name">Calidad Ambiental Interior</span>
+      <span class="mod-tag tag-dip">DIP</span>
+    </button></li>
+    <li><button class="module-btn" onclick="showModule(6)">
+      <span class="mod-num">07</span>
+      <span class="mod-name">Sistema LEED v4.1</span>
+      <span class="mod-tag tag-dip">DIP</span>
+    </button></li>
+
+    <div class="sidebar-section">Máster</div>
+    <li><button class="module-btn" onclick="showModule(7)">
+      <span class="mod-num">08</span>
+      <span class="mod-name">Proyecto Final + Certificación</span>
+      <span class="mod-tag tag-mas">MÁS</span>
+    </button></li>
+  </ul>
+</nav>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════ -->
+<main class="main">
+
+<!-- ═══ MÓDULO 01 ═══════════════════════════════════════════ -->
+<div class="module-content active" id="mod-0">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 01 · Nivel Básico <span class="level-pill pill-bas">BÁSICO</span></div>
+    <h1 class="mod-title">Fundamentos del Diseño Sostenible</h1>
+    <p class="mod-desc">Comprende qué es la construcción sostenible, por qué existe LEED y cómo este sistema de certificación está transformando la industria de la construcción en Latinoamérica y el Perú.</p>
+  </div>
+
+  <h2 class="section">¿Qué es el Diseño Sostenible?</h2>
+  <p class="body">El diseño sostenible busca satisfacer las necesidades del presente sin comprometer la capacidad de las generaciones futuras para satisfacer las suyas. En la construcción, esto significa edificios que consumen menos energía, utilizan menos agua, generan menos residuos y crean ambientes más saludables para sus ocupantes.</p>
+
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">🌱</span>
+      <div class="card-title">Reducción de Impacto</div>
+      <div class="card-text">Los edificios consumen el 40% de la energía global y generan el 33% de las emisiones de CO₂. El diseño sostenible reduce drásticamente estos números.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">💰</span>
+      <div class="card-title">Retorno de Inversión</div>
+      <div class="card-text">Un edificio LEED certifica ahorros del 20 al 50 porciento en energía y agua. El costo adicional de construcción se recupera en 5 a 7 años promedio.</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9e6a">
+      <span class="card-icon">👥</span>
+      <div class="card-title">Bienestar Humano</div>
+      <div class="card-text">Los edificios sostenibles mejoran la productividad hasta en un 26%, reducen el ausentismo laboral y crean ambientes más saludables para vivir y trabajar.</div>
+    </div>
+    <div class="card" style="--card-accent:#c9a84c">
+      <span class="card-icon">🌎</span>
+      <div class="card-title">Contexto Latinoamérica</div>
+      <div class="card-text">Brasil, México, Colombia y Perú lideran la región en proyectos certificados LEED. Perú cuenta con más de 80 proyectos registrados o certificados a 2025.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Origen y Estructura del Sistema LEED</h2>
+  <p class="body">LEED son las siglas de Leadership in Energy and Environmental Design, en español Liderazgo en Energía y Diseño Ambiental. Fue desarrollado por el Consejo de Construcción Verde de los Estados Unidos, conocido como USGBC, en 1998. Es el estándar de certificación verde más utilizado en el mundo, con más de 100,000 proyectos certificados en más de 180 países.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Categoría LEED</th><th>Siglas</th><th>Aplicación</th></tr></thead>
+      <tbody>
+        <tr><td><strong>BD+C</strong></td><td>Building Design + Construction</td><td>Diseño y construcción de edificios nuevos</td></tr>
+        <tr><td><strong>O+M</strong></td><td>Operations + Maintenance</td><td>Operación y mantenimiento de edificios existentes</td></tr>
+        <tr><td><strong>ID+C</strong></td><td>Interior Design + Construction</td><td>Diseño de interiores comerciales y de oficinas</td></tr>
+        <tr><td><strong>ND</strong></td><td>Neighborhood Development</td><td>Planificación y desarrollo de barrios sostenibles</td></tr>
+        <tr><td><strong>Homes</strong></td><td>Residential</td><td>Viviendas unifamiliares y multifamiliares</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section">Normativa Base en el Perú</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Norma Técnica A.010 — Condiciones Generales de Diseño</div>
+        <div class="step-text">Establece los requisitos mínimos de diseño arquitectónico para toda edificación en el Perú. Es la base sobre la cual se aplican las estrategias LEED.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Norma Técnica A.120 — Accesibilidad Universal</div>
+        <div class="step-text">Regula las condiciones de accesibilidad para personas con discapacidad. LEED valora la inclusión y accesibilidad como parte del crédito de Equidad Social.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Decreto Supremo DS 020 — Eficiencia Energética</div>
+        <div class="step-text">Establece las medidas de eficiencia energética para edificaciones del sector público. Complementa directamente los requisitos LEED de energía y atmósfera.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Reglamento Nacional de Edificaciones — Título VI y VII</div>
+        <div class="step-text">Regula las instalaciones sanitarias y eléctricas. Fundamental para el cálculo de la línea base de consumo de agua y energía en los modelos LEED.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-icon">💡</div>
+    <div class="tip-body">
+      <span class="tip-label">TIP PROFESIONAL</span>
+      <p>Antes de iniciar cualquier proyecto con aspiraciones LEED, verifica siempre la versión del sistema aplicable. En 2025, LEED v4.1 es la versión más actualizada y recomendada para nuevos registros. Las versiones anteriores tienen fechas de vencimiento para nuevos proyectos.</p>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" disabled><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(1)">Siguiente: Diseño de Sitio <span class="arrow">→</span></button>
+  </div>
+</div>
+
+<!-- ═══ MÓDULO 02 ═══════════════════════════════════════════ -->
+<div class="module-content" id="mod-1">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 02 · Nivel Intermedio <span class="level-pill pill-int">INTERMEDIO</span></div>
+    <h1 class="mod-title">Diseño de Sitio Sostenible</h1>
+    <p class="mod-desc">El lugar donde se construye un edificio determina gran parte de su impacto ambiental. Aprende a evaluar, seleccionar y diseñar sitios que maximicen la conectividad urbana, minimicen la huella ecológica y cumplan con los créditos LEED de Localización y Transporte.</p>
+  </div>
+
+  <h2 class="section">Criterios de Localización LEED</h2>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">🚌</span>
+      <div class="card-title">Acceso a Transporte</div>
+      <div class="card-text">El proyecto debe ubicarse cerca de paradas de transporte público con múltiples rutas. LEED requiere acceso a pie en menos de 400 metros.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">🚲</span>
+      <div class="card-title">Movilidad Activa</div>
+      <div class="card-text">Infraestructura para ciclistas: estacionamiento seguro, vestidores y duchas. Créditos adicionales por vehículos eléctricos y espacios de carga.</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9e6a">
+      <span class="card-icon">🌳</span>
+      <div class="card-title">Espacios Abiertos</div>
+      <div class="card-text">LEED exige que el 30% del sitio sea espacio abierto vegetal. Techos verdes y jardines verticales también contabilizan si son accesibles.</div>
+    </div>
+    <div class="card" style="--card-accent:#c9a84c">
+      <span class="card-icon">🏙️</span>
+      <div class="card-title">Densidad Urbana</div>
+      <div class="card-text">Construir en áreas ya desarrolladas y densas reduce la expansión urbana no planificada. LEED premia la reurbanización de sitios contaminados.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Gestión de Aguas Pluviales</h2>
+  <p class="body">Las aguas pluviales son uno de los mayores problemas ambientales en ciudades como Lima. El sellado del suelo por pavimentos impermeables genera escorrentía que erosiona suelos, contamina ríos y satura sistemas de alcantarillado. LEED requiere gestionar el 80 al 95 porciento del volumen de lluvia anual en sitio.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Jardines de Lluvia o Rain Gardens</div>
+        <div class="step-text">Depresiones vegetadas que capturan y filtran el agua de lluvia de techos y estacionamientos. Reducen el volumen de escorrentía hasta en un 80%.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Pavimentos Permeables</div>
+        <div class="step-text">Permiten que el agua se infiltre al subsuelo. Tipos: adoquines con juntas abiertas, concreto poroso, asfalto permeable y paneles de plástico con relleno de grava.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Bioretención y Zanjas de Infiltración</div>
+        <div class="step-text">Canales vegetados que ralentizan el flujo del agua y favorecen la infiltración. Muy efectivos en bordes de estacionamientos y vías de acceso.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Techos Verdes Extensivos</div>
+        <div class="step-text">Reducen la escorrentía entre un 50 y 70%. También disminuyen el efecto isla de calor y mejoran el aislamiento térmico del edificio.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section">Reducción del Efecto Isla de Calor</h2>
+  <p class="body">El efecto isla de calor urbana ocurre cuando las superficies oscuras absorben y reemiten calor, elevando la temperatura de las ciudades entre 2 y 5 grados respecto a las zonas rurales. LEED combate este fenómeno exigiendo materiales de alta reflectancia solar en techos y pavimentos.</p>
+
+  <div class="tip">
+    <div class="tip-icon">🌡️</div>
+    <div class="tip-body">
+      <span class="tip-label">DATO TÉCNICO</span>
+      <p>LEED requiere que el 50% de las superficies de estacionamiento al aire libre tengan un índice de reflectancia solar, conocido como SRI, mayor a 29. Los techos deben tener SRI mayor a 78 para techos de baja pendiente, o ser techos verdes que cuban el 50% del área.</p>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" onclick="showModule(0)"><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(2)">Siguiente: Eficiencia Hídrica <span class="arrow">→</span></button>
+  </div>
+</div>
+
+<!-- ═══ MÓDULO 03 ═══════════════════════════════════════════ -->
+<div class="module-content" id="mod-2">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 03 · Nivel Intermedio <span class="level-pill pill-int">INTERMEDIO</span></div>
+    <h1 class="mod-title">Eficiencia Hídrica</h1>
+    <p class="mod-desc">El agua es el recurso más crítico del siglo veintiuno. En Perú, la escasez hídrica en la costa y la sierra hace que este módulo tenga especial relevancia. Aprende a diseñar edificios que consuman hasta un 50% menos de agua potable.</p>
+  </div>
+
+  <h2 class="section">Estrategias para Interiores</h2>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">🚿</span>
+      <div class="card-title">Artefactos de Bajo Flujo</div>
+      <div class="card-text">Inodoros de doble descarga a 4.8 y 3 litros, grifos con aireadores a 1.9 litros por minuto, duchas a 6.6 litros por minuto. Reducción garantizada del 20 al 40%.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">📊</span>
+      <div class="card-title">Medición y Monitoreo</div>
+      <div class="card-text">Medidores de agua por piso o por sistema permiten detectar fugas y medir el ahorro real. LEED exige monitoreo permanente en proyectos Platino.</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9e6a">
+      <span class="card-icon">♻️</span>
+      <div class="card-title">Aguas Grises Recicladas</div>
+      <div class="card-text">El agua de lavamanos y duchas, tratada con filtración y desinfección ultravioleta, puede usarse para inodoros y riego. Ahorro adicional del 15 al 25%.</div>
+    </div>
+    <div class="card" style="--card-accent:#c9a84c">
+      <span class="card-icon">🌧️</span>
+      <div class="card-title">Captación de Lluvia</div>
+      <div class="card-text">Cisternas que almacenan agua pluvial de techos para uso en inodoros, riego y torres de enfriamiento. Muy efectivas en zonas con precipitación regular.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Eficiencia en Paisajismo Exterior</h2>
+  <p class="body">El riego de jardines puede representar hasta el 30% del consumo hídrico de un edificio de oficinas. LEED exige reducir al mínimo o eliminar completamente el uso de agua potable para riego exterior.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Estrategia</th><th>Ahorro estimado</th><th>Créditos LEED</th></tr></thead>
+      <tbody>
+        <tr><td>Plantas nativas o xerófitas</td><td>40 a 60%</td><td>WE Prerequisito</td></tr>
+        <tr><td>Riego por goteo inteligente</td><td>30 a 50%</td><td>WE Crédito 1</td></tr>
+        <tr><td>Agua pluvial o reciclada para riego</td><td>50 a 100%</td><td>WE Crédito 2</td></tr>
+        <tr><td>Eliminación total del riego potable</td><td>100%</td><td>WE Crédito 2 completo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">
+    <div class="tip-icon">🇵🇪</div>
+    <div class="tip-body">
+      <span class="tip-label">NORMATIVA PERUANA</span>
+      <p>El Ministerio del Ambiente y la Autoridad Nacional del Agua regulan el reuso de aguas residuales tratadas. Para uso en riego sin contacto humano directo se requiere alcanzar los límites de la Clase III de la Ley de Recursos Hídricos. Para riego de jardines con contacto de personas se exige calidad Clase II.</p>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" onclick="showModule(1)"><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(3)">Siguiente: Energía y Atmósfera <span class="arrow">→</span></button>
+  </div>
+</div>
+
+<!-- ═══ MÓDULO 04 ═══════════════════════════════════════════ -->
+<div class="module-content" id="mod-3">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 04 · Nivel Avanzado <span class="level-pill pill-adv">AVANZADO</span></div>
+    <h1 class="mod-title">Energía y Atmósfera</h1>
+    <p class="mod-desc">La energía es el componente con mayor peso en la puntuación LEED y el que mayor impacto tiene en las emisiones globales. Este módulo técnico cubre simulación energética, comisionamiento, energías renovables y la gestión de refrigerantes.</p>
+  </div>
+
+  <h2 class="section">Fundamentos de Eficiencia Energética</h2>
+  <p class="body">El consumo energético de un edificio depende de cuatro sistemas principales que interactúan entre sí: la envolvente térmica, que incluye muros, techos, ventanas y puentes térmicos; los sistemas de climatización, ventilación y aire acondicionado; la iluminación artificial y los controles de iluminación; y los equipos y electrodomésticos. LEED analiza todos estos sistemas de forma integrada.</p>
+
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">🏗️</span>
+      <div class="card-title">Envolvente Térmica</div>
+      <div class="card-text">Aislamiento térmico en muros y techos, ventanas con doble vidrio y baja emisividad, puentes térmicos controlados. Base del diseño pasivo.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">❄️</span>
+      <div class="card-title">Climatización Eficiente</div>
+      <div class="card-text">Sistemas VRF de volumen de refrigerante variable, chillers de alta eficiencia, recuperadores de calor entálpico y ventilación con control de demanda por CO₂.</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9e6a">
+      <span class="card-icon">💡</span>
+      <div class="card-title">Iluminación LED y Controles</div>
+      <div class="card-text">LED de alta eficiencia, sensores de presencia, control de iluminación natural con luxómetros y sistemas DALI de regulación continua. Ahorro del 50 al 70%.</div>
+    </div>
+    <div class="card" style="--card-accent:#c9a84c">
+      <span class="card-icon">☀️</span>
+      <div class="card-title">Energías Renovables</div>
+      <div class="card-text">Paneles fotovoltaicos, solar térmica para agua caliente sanitaria, geotermia superficial. LEED otorga hasta 6 puntos por generación renovable en sitio.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Simulación Energética</h2>
+  <p class="body">La simulación energética es el proceso de modelar el comportamiento energético de un edificio usando software especializado antes de construirlo. LEED requiere demostrar un ahorro de al menos el 5% respecto a un edificio de referencia definido por la norma ASHRAE 90.1.</p>
+
+  <div class="tags">
+    <span class="tag-item">EnergyPlus</span>
+    <span class="tag-item">OpenStudio</span>
+    <span class="tag-item">eQUEST</span>
+    <span class="tag-item">DesignBuilder</span>
+    <span class="tag-item">IES VE</span>
+    <span class="tag-item">Revit Energy Analysis</span>
+    <span class="tag-item">TRNSYS</span>
+    <span class="tag-item">HAP Carrier</span>
+  </div>
+
+  <h2 class="section">Comisionamiento o Commissioning</h2>
+  <p class="body">El comisionamiento es el proceso de verificación sistemática y documentada de que todos los sistemas del edificio han sido diseñados, instalados, probados y pueden ser operados y mantenidos conforme a los requisitos del propietario. Es un prerrequisito obligatorio en LEED y puede evitar entre el 15 y el 30% de sobre-consumo energético.</p>
+
+  <div class="tip">
+    <div class="tip-icon">🌡️</div>
+    <div class="tip-body">
+      <span class="tip-label">REFRIGERANTES Y PROTOCOLO DE MONTREAL</span>
+      <p>LEED prohíbe el uso de refrigerantes que contengan CFC y penaliza los HCFC. Se prefieren refrigerantes naturales como R-290 propano, R-717 amoniaco o R-744 dióxido de carbono, y los nuevos HFO de muy bajo potencial de calentamiento global como el R-1234yf.</p>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" onclick="showModule(2)"><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(4)">Siguiente: Materiales y Recursos <span class="arrow">→</span></button>
+  </div>
+</div>
+
+<!-- ═══ MÓDULO 05 ═══════════════════════════════════════════ -->
+<div class="module-content" id="mod-4">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 05 · Nivel Avanzado <span class="level-pill pill-adv">AVANZADO</span></div>
+    <h1 class="mod-title">Materiales y Recursos</h1>
+    <p class="mod-desc">Los materiales de construcción representan hasta el 11% de las emisiones globales de carbono incluso antes de que el edificio entre en funcionamiento. Aprende a seleccionar materiales sostenibles, aplicar análisis de ciclo de vida y gestionar los residuos de construcción.</p>
+  </div>
+
+  <h2 class="section">Análisis de Ciclo de Vida — LCA</h2>
+  <p class="body">El Análisis de Ciclo de Vida, conocido como LCA por sus siglas en inglés Life Cycle Assessment, evalúa el impacto ambiental de un material desde su extracción de la tierra hasta su disposición final al terminar su vida útil. LEED v4.1 otorga créditos por realizar un LCA comparativo de la estructura y envolvente del edificio.</p>
+
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">📋</span>
+      <div class="card-title">Declaraciones EPD</div>
+      <div class="card-text">Environmental Product Declarations. Documentos estandarizados que reportan el impacto ambiental de un producto específico según ISO 14044. Equivalen a la etiqueta nutricional de un material.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">🌲</span>
+      <div class="card-title">Certificación FSC</div>
+      <div class="card-text">Forest Stewardship Council certifica que la madera proviene de bosques gestionados de forma sostenible. LEED exige que toda la madera estructural sea FSC certificada.</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9e6a">
+      <span class="card-icon">🔄</span>
+      <div class="card-title">Cradle to Cradle</div>
+      <div class="card-text">Estándar de economía circular que evalúa la salud de los materiales, la posibilidad de reutilización, las energías renovables usadas y la gestión del agua en su fabricación.</div>
+    </div>
+    <div class="card" style="--card-accent:#c9a84c">
+      <span class="card-icon">📍</span>
+      <div class="card-title">Materiales Locales</div>
+      <div class="card-text">LEED otorga créditos por usar materiales extraídos, procesados y fabricados dentro de un radio de 800 kilómetros del proyecto. Apoya la economía local y reduce emisiones de transporte.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Gestión de Residuos de Construcción</h2>
+  <p class="body">La construcción genera entre 1 y 2 kilogramos de residuos sólidos por metro cuadrado construido. LEED exige desviar del vertedero al menos el 50% del total de residuos generados, y otorga créditos adicionales por alcanzar el 75% o más.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Plan de Gestión de Residuos</div>
+        <div class="step-text">Antes de iniciar obra, elaborar un plan que identifique los tipos de residuos esperados, las metas de desvío y los gestores autorizados para cada tipo de material.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Segregación en Obra</div>
+        <div class="step-text">Contenedores diferenciados para concreto, fierro, madera, drywall, cartón, plástico y residuos peligrosos. La segregación en origen es clave para el éxito del plan.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Registro y Documentación</div>
+        <div class="step-text">Pesar y registrar cada carga de residuos retirada de obra, con destino documentado. Las guías de remisión de los gestores autorizados son la evidencia para LEED.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" onclick="showModule(3)"><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(5)">Siguiente: Calidad Ambiental Interior <span class="arrow">→</span></button>
+  </div>
+</div>
+
+<!-- ═══ MÓDULO 06 ═══════════════════════════════════════════ -->
+<div class="module-content" id="mod-5">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 06 · Diplomado <span class="level-pill pill-dip">DIPLOMADO</span></div>
+    <h1 class="mod-title">Calidad Ambiental Interior</h1>
+    <p class="mod-desc">Las personas pasan entre el 80 y el 90 porciento de su tiempo en interiores. La calidad del ambiente interior impacta directamente en la salud, el bienestar y la productividad de los ocupantes. Este es uno de los módulos más valorados por arquitectos e ingenieros.</p>
+  </div>
+
+  <h2 class="section">Los Cuatro Pilares del Confort Interior</h2>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">💨</span>
+      <div class="card-title">Calidad del Aire Interior</div>
+      <div class="card-text">Contaminantes como compuestos orgánicos volátiles, partículas finas PM2.5, formaldehído y radón afectan la salud. La ventilación adecuada es la primera línea de defensa.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">🌡️</span>
+      <div class="card-title">Confort Térmico</div>
+      <div class="card-text">La norma ASHRAE 55 define los rangos de temperatura, humedad y velocidad del aire que garantizan confort al 80% de los ocupantes en diferentes tipos de actividad.</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9e6a">
+      <span class="card-icon">🔊</span>
+      <div class="card-title">Confort Acústico</div>
+      <div class="card-text">El ruido excesivo reduce la productividad hasta en un 66%. LEED evalúa el aislamiento acústico entre espacios y los niveles de ruido de fondo en oficinas y aulas.</div>
+    </div>
+    <div class="card" style="--card-accent:#c9a84c">
+      <span class="card-icon">☀️</span>
+      <div class="card-title">Confort Visual</div>
+      <div class="card-text">Acceso a luz natural, control del deslumbramiento y vistas al exterior. Los trabajadores con ventanas duermen 46 minutos más por noche según estudios de la Northwestern University.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Ventilación: ASHRAE 62.1</h2>
+  <p class="body">La norma ASHRAE 62.1 es el estándar de referencia obligatorio en LEED para el diseño de sistemas de ventilación en espacios no residenciales. Establece tasas mínimas de ventilación por persona y por unidad de área de piso para cada tipo de ocupación.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tipo de Espacio</th><th>Caudal por persona</th><th>Caudal por área</th></tr></thead>
+      <tbody>
+        <tr><td>Oficinas abiertas</td><td>5 L/s por persona</td><td>0.06 L/s·m²</td></tr>
+        <tr><td>Salas de reunión</td><td>5 L/s por persona</td><td>0.06 L/s·m²</td></tr>
+        <tr><td>Aulas escolares</td><td>5 L/s por persona</td><td>0.06 L/s·m²</td></tr>
+        <tr><td>Restaurantes</td><td>4 L/s por persona</td><td>0.18 L/s·m²</td></tr>
+        <tr><td>Gimnasios</td><td>10 L/s por persona</td><td>0.30 L/s·m²</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">
+    <div class="tip-icon">🏥</div>
+    <div class="tip-body">
+      <span class="tip-label">REGLAMENTO MINSA PERÚ</span>
+      <p>El Reglamento de Salud Ocupacional del MINSA complementa ASHRAE 62.1 en el contexto peruano. Para ambientes de trabajo en Lima, se exige un mínimo de 6 renovaciones de aire por hora en oficinas y de 10 a 15 renovaciones en espacios de uso intensivo como laboratorios y talleres.</p>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" onclick="showModule(4)"><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(6)">Siguiente: Sistema LEED v4.1 <span class="arrow">→</span></button>
+  </div>
+</div>
+
+<!-- ═══ MÓDULO 07 ═══════════════════════════════════════════ -->
+<div class="module-content" id="mod-6">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 07 · Diplomado <span class="level-pill pill-dip">DIPLOMADO</span></div>
+    <h1 class="mod-title">Sistema LEED v4.1 y Certificación</h1>
+    <p class="mod-desc">En este módulo aprendes a navegar el sistema de puntuación LEED v4.1 en su totalidad: prerequisitos obligatorios, créditos opcionales, niveles de certificación y el proceso completo de registro hasta obtener la placa dorada.</p>
+  </div>
+
+  <h2 class="section">Estructura de Puntuación LEED v4.1</h2>
+  <p class="body">LEED v4.1 otorga hasta 110 puntos distribuidos en ocho categorías de evaluación. Los prerequisitos son obligatorios y no suman puntos, pero sin cumplirlos el proyecto no puede certificarse. Los créditos son opcionales y el equipo de diseño elige cuáles perseguir según el tipo y ubicación del proyecto.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Categoría</th><th>Sigla</th><th>Puntos máx.</th></tr></thead>
+      <tbody>
+        <tr><td>Localización y Transporte</td><td><strong>LT</strong></td><td>16 puntos</td></tr>
+        <tr><td>Sitios Sostenibles</td><td><strong>SS</strong></td><td>10 puntos</td></tr>
+        <tr><td>Eficiencia Hídrica</td><td><strong>WE</strong></td><td>11 puntos</td></tr>
+        <tr><td>Energía y Atmósfera</td><td><strong>EA</strong></td><td>33 puntos</td></tr>
+        <tr><td>Materiales y Recursos</td><td><strong>MR</strong></td><td>13 puntos</td></tr>
+        <tr><td>Calidad Ambiental Interior</td><td><strong>EQ</strong></td><td>16 puntos</td></tr>
+        <tr><td>Innovación</td><td><strong>IN</strong></td><td>6 puntos</td></tr>
+        <tr><td>Prioridad Regional</td><td><strong>RP</strong></td><td>4 puntos</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section">Niveles de Certificación</h2>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">🏅</span>
+      <div class="card-title">Certificado</div>
+      <div class="card-text">40 a 49 puntos. Reconoce el compromiso básico con la sostenibilidad. Acceso a beneficios fiscales en varios países de la región.</div>
+    </div>
+    <div class="card" style="--card-accent:#c0c0c0">
+      <span class="card-icon">🥈</span>
+      <div class="card-title">Plata</div>
+      <div class="card-text">50 a 59 puntos. Nivel más común en proyectos corporativos y educativos en Latinoamérica. Demuestra un desempeño ambiental significativamente superior.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">🥇</span>
+      <div class="card-title">Oro</div>
+      <div class="card-text">60 a 79 puntos. Estándar exigido por muchas multinacionales para sus sedes en la región. Requiere una estrategia de diseño integrado desde etapas tempranas.</div>
+    </div>
+    <div class="card" style="--card-accent:#e5e4e2">
+      <span class="card-icon">💎</span>
+      <div class="card-title">Platino</div>
+      <div class="card-text">80 puntos o más. El máximo reconocimiento LEED. En Perú, edificios como la nueva sede del BBVA Lima aspiran a esta distinción.</div>
+    </div>
+  </div>
+
+  <h2 class="section">Proceso de Certificación Paso a Paso</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Registro en LEED Online</div>
+        <div class="step-text">Crear una cuenta en leedonline.com y registrar el proyecto pagando la tarifa de registro según el tamaño del edificio. El registro activa acceso a todas las herramientas USGBC.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Proceso Integrador de Diseño</div>
+        <div class="step-text">Reunir al equipo completo antes del diseño esquemático: arquitecto, ingeniero mecánico, eléctrico, estructural, paisajista y consultor LEED. Definir la estrategia y los créditos objetivo.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Documentación y Carga</div>
+        <div class="step-text">Durante el diseño y la construcción, subir la documentación de cada crédito a LEED Online: cálculos, especificaciones, planos, fotografías y cartas de declaración firmadas.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Revisión por GBCI</div>
+        <div class="step-text">El Green Building Certification Institute revisa la documentación. El proceso puede tomar entre 30 y 90 días. Los revisores pueden solicitar aclaraciones o documentación adicional.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Certificación y Placa</div>
+        <div class="step-text">Una vez aprobado, se recibe el certificado digital y la placa física del nivel obtenido. La certificación LEED tiene vigencia de 5 años para proyectos en operación bajo la plataforma Arc.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" onclick="showModule(5)"><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(7)">Siguiente: Proyecto Final <span class="arrow">→</span></button>
+  </div>
+</div>
+
+<!-- ═══ MÓDULO 08 ═══════════════════════════════════════════ -->
+<div class="module-content" id="mod-7">
+  <div class="mod-header">
+    <div class="mod-eyebrow">Módulo 08 · Máster y Certificación <span class="level-pill pill-mas">MÁSTER</span></div>
+    <h1 class="mod-title">Proyecto Final + Certificación Internacional</h1>
+    <p class="mod-desc">El módulo final integra todo el programa en la aplicación real a un proyecto de construcción peruano. Trabajarás con la hoja de puntuación LEED completa, simularás créditos, desarrollarás la documentación técnica y te prepararás para el examen de certificación internacional.</p>
+  </div>
+
+  <h2 class="section">El Proyecto Integrador</h2>
+  <div class="highlight gold">
+    <div class="highlight-title">📋 Caso de Estudio: Centro Empresarial Lima Norte</div>
+    <p>Edificio de oficinas de 12,000 metros cuadrados, 8 pisos, uso mixto con comercio en primer nivel. Ubicación: distrito de Independencia, Lima. Objetivo de certificación: LEED Gold para BD+C versión 4.1. El alumno asumirá el rol de Consultor LEED Acredited Professional durante todo el módulo.</p>
+  </div>
+
+  <h2 class="section">Fases del Proyecto Final</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Análisis del Sitio y Estrategia LEED</div>
+        <div class="step-text">Evaluar la ubicación, transporte público disponible, servicios cercanos y condiciones climáticas de Lima. Definir la estrategia de créditos para alcanzar 60 a 65 puntos.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Modelado Energético</div>
+        <div class="step-text">Desarrollar el modelo energético con EnergyPlus o DesignBuilder usando datos climáticos de Lima Callao. Demostrar el 15% de ahorro mínimo sobre la línea base ASHRAE 90.1.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Hoja de Puntuación LEED Completa</div>
+        <div class="step-text">Completar la scorecard oficial LEED v4.1 para BD+C, justificando cada crédito seleccionado y desestimado. Verificar que todos los prerrequisitos estén cumplidos.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Documentación Técnica</div>
+        <div class="step-text">Preparar las cartas de declaración, los cálculos de agua y energía, las especificaciones de materiales y la documentación de gestión de residuos requeridas por LEED Online.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-body">
+        <div class="step-title">Presentación y Defensa</div>
+        <div class="step-text">Presentar el proyecto ante el jurado evaluador explicando la estrategia de sostenibilidad, los créditos obtenidos, los ahorros proyectados y el retorno de inversión.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section">Certificaciones Profesionales Recomendadas</h2>
+  <p class="body">Al completar este programa estarás preparado para rendir los exámenes de certificación profesional del USGBC. Estas credenciales son reconocidas internacionalmente y aumentan significativamente el valor profesional en el mercado de la construcción sostenible.</p>
+
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#6aab7a">
+      <span class="card-icon">🎓</span>
+      <div class="card-title">LEED Green Associate</div>
+      <div class="card-text">Credencial de nivel de entrada. Demuestra conocimiento de los principios y procesos LEED. Ideal para iniciar la carrera en sostenibilidad. Examen de 100 preguntas.</div>
+    </div>
+    <div class="card" style="--card-accent:#e8b84b">
+      <span class="card-icon">⭐</span>
+      <div class="card-title">LEED AP BD+C</div>
+      <div class="card-text">Credencial avanzada para especialistas en diseño y construcción. Permite aparecer como LEED AP en el directorio oficial del USGBC. Examen de 200 preguntas.</div>
+    </div>
+    <div class="card" style="--card-accent:#c9a84c">
+      <span class="card-icon">🏆</span>
+      <div class="card-title">LEED Fellow</div>
+      <div class="card-text">El máximo nivel de credencial LEED. Requiere 10 años de experiencia y certificación de pares. Reconoce liderazgo excepcional en sostenibilidad de la edificación.</div>
+    </div>
+  </div>
+
+  <div class="cert-banner">
+    <div class="cert-title">🏆 Felicitaciones — Has completado el programa</div>
+    <div class="cert-subtitle">Al aprobar el examen final con 70% o más, recibirás el certificado de Máster en Diseño y Construcción Sostenible con mención en LEED v4.1, habilitándote para liderar procesos de certificación LEED en cualquier proyecto de la región latinoamericana.</div>
+    <div class="cert-tags">
+      <span class="cert-tag">LEED v4.1</span>
+      <span class="cert-tag">120 horas</span>
+      <span class="cert-tag">8 módulos</span>
+      <span class="cert-tag">Proyecto Real</span>
+      <span class="cert-tag">Certificado Internacional</span>
+      <span class="cert-tag">Normativa Perú</span>
+    </div>
+  </div>
+
+  <div class="mod-nav-footer">
+    <button class="nav-btn" onclick="showModule(6)"><span class="arrow">←</span> Anterior</button>
+    <button class="nav-btn next" onclick="showModule(0)">Volver al inicio <span class="arrow">↑</span></button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ══ VOICE BAR ══════════════════════════════════════════════ -->
+<div class="voice-bar">
+  <span class="voice-icon" id="voiceIcon">🎙️</span>
+  <span class="voice-label" id="voiceLabel">Listo</span>
+  <span class="voice-preview" id="voicePreview">Selecciona un módulo para escuchar la narración automática en español latino...</span>
+  <div class="voice-controls">
+    <div class="voice-speed">
+      <span>Vel:</span>
+      <input type="range" id="speedRange" min="0.6" max="1.8" step="0.1" value="1.0" oninput="updateSpeed(this.value)">
+      <span id="speedVal">1.0x</span>
+    </div>
+    <button class="voice-btn" id="playBtn" onclick="togglePlay()">▶ Leer</button>
+    <button class="voice-btn stop-btn" onclick="stopVoice()">■ Stop</button>
+    <button class="voice-toggle" id="voiceToggle" onclick="toggleVoiceEnabled()" title="Activar/desactivar narración automática">🔊</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  MOTOR DE VOZ — mismo sistema que curso Power BI
+//  Idioma: es-PE (español peruano / latino)
+// ══════════════════════════════════════════════════
+
+const synth     = window.speechSynthesis;
+let currentUtt  = null;
+let voiceEnabled = true;
+let selectedVoice = null;
+let speechRate  = 1.0;
+let isPlaying   = false;
+
+// ── Seleccionar la mejor voz en español ──────────
+function getSpanishVoice() {
+  const voices = synth.getVoices();
+  // Prioridad: Perú → Latinoamérica → México → Argentina → España
+  const priority = ['es-PE','es-419','es-MX','es-US','es-AR','es-CL','es-CO','es-ES','es'];
+  for (const lang of priority) {
+    const v = voices.find(v => v.lang === lang || v.lang.startsWith(lang));
+    if (v) return v;
+  }
+  return voices.find(v => v.lang.startsWith('es')) || voices[0];
+}
+
+// ── Extraer texto limpio del módulo activo ────────
+function getModuleText(idx) {
+  const mod = document.getElementById('mod-' + idx);
+  if (!mod) return '';
+
+  let text = '';
+
+  // Encabezado: eyebrow + título + descripción
+  const eyebrow = mod.querySelector('.mod-eyebrow');
+  const title   = mod.querySelector('.mod-title');
+  const desc    = mod.querySelector('.mod-desc');
+  if (eyebrow) text += eyebrow.innerText.replace(/\n/g,' ').trim() + '. ';
+  if (title)   text += title.innerText.trim() + '. ';
+  if (desc)    text += desc.innerText.trim() + '. ';
+
+  // Recorrer todos los nodos de texto, excluyendo cabecera ya leída y botones
+  const walker = document.createTreeWalker(mod, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const p = node.parentElement;
+      if (!p) return NodeFilter.FILTER_REJECT;
+      // Excluir: encabezado (ya leído), botones de navegación, etiquetas de nivel
+      if (p.closest('.mod-header, .mod-nav-footer, .level-pill, .mod-tag, .nav-btn, button'))
+        return NodeFilter.FILTER_REJECT;
+      const t = node.textContent.trim();
+      if (!t || t.length < 3) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  const parts = [];
+  let node;
+  while ((node = walker.nextNode())) {
+    const t = node.textContent.trim();
+    if (t) parts.push(t);
+  }
+
+  text += parts.join(' ');
+  return text.replace(/\s+/g,' ').trim();
+}
+
+// ── Reproducir texto ──────────────────────────────
+function speakText(text) {
+  if (!synth || !text) return;
+  stopVoice();
+
+  currentUtt          = new SpeechSynthesisUtterance(text);
+  currentUtt.lang     = 'es-PE';
+  currentUtt.rate     = speechRate;
+  currentUtt.pitch    = 1.0;
+  currentUtt.volume   = 1;
+
+  if (!selectedVoice) selectedVoice = getSpanishVoice();
+  if (selectedVoice) currentUtt.voice = selectedVoice;
+
+  currentUtt.onstart = () => {
+    isPlaying = true;
+    document.getElementById('voiceIcon').classList.add('speaking');
+    document.getElementById('voiceLabel').textContent  = 'Leyendo...';
+    document.getElementById('voicePreview').textContent = text.substring(0, 90) + '...';
+    document.getElementById('playBtn').textContent      = '⏸ Pausar';
+    document.getElementById('playBtn').classList.add('active');
+  };
+
+  currentUtt.onend = currentUtt.onerror = () => {
+    isPlaying = false;
+    document.getElementById('voiceIcon').classList.remove('speaking');
+    document.getElementById('voiceLabel').textContent  = 'Listo';
+    document.getElementById('playBtn').textContent     = '▶ Leer';
+    document.getElementById('playBtn').classList.remove('active');
+  };
+
+  synth.speak(currentUtt);
+}
+
+// ── Leer módulo activo ────────────────────────────
+function getActiveIdx() {
+  const mods = document.querySelectorAll('.module-content');
+  for (let i = 0; i < mods.length; i++) {
+    if (mods[i].classList.contains('active')) return i;
+  }
+  return 0;
+}
+
+function readCurrentModule() {
+  stopVoice();
+  const text = getModuleText(getActiveIdx());
+  if (text) speakText(text);
+}
+
+// ── Controles públicos ────────────────────────────
+function togglePlay() {
+  if (synth.speaking && !synth.paused) {
+    synth.pause();
+    isPlaying = false;
+    document.getElementById('voiceIcon').classList.remove('speaking');
+    document.getElementById('voiceLabel').textContent = 'Pausado';
+    document.getElementById('playBtn').textContent    = '▶ Continuar';
+  } else if (synth.paused) {
+    synth.resume();
+    isPlaying = true;
+    document.getElementById('voiceIcon').classList.add('speaking');
+    document.getElementById('voiceLabel').textContent = 'Leyendo...';
+    document.getElementById('playBtn').textContent    = '⏸ Pausar';
+  } else {
+    readCurrentModule();
+  }
+}
+
+function stopVoice() {
+  synth.cancel();
+  isPlaying = false;
+  currentUtt = null;
+  document.getElementById('voiceIcon').classList.remove('speaking');
+  document.getElementById('voiceLabel').textContent  = 'Listo';
+  document.getElementById('playBtn').textContent     = '▶ Leer';
+  document.getElementById('playBtn').classList.remove('active');
+}
+
+function updateSpeed(val) {
+  speechRate = parseFloat(val);
+  document.getElementById('speedVal').textContent = speechRate.toFixed(1) + 'x';
+  if (synth.speaking) readCurrentModule();
+}
+
+function toggleVoiceEnabled() {
+  voiceEnabled = !voiceEnabled;
+  const btn = document.getElementById('voiceToggle');
+  btn.textContent = voiceEnabled ? '🔊' : '🔇';
+  btn.title = voiceEnabled ? 'Desactivar narración automática' : 'Activar narración automática';
+  if (!voiceEnabled) stopVoice();
+}
+
+// ── Navegación entre módulos ──────────────────────
+const allModules = document.querySelectorAll('.module-content');
+const allBtns    = document.querySelectorAll('.module-btn');
+
+function showModule(index) {
+  allModules.forEach(m => m.classList.remove('active'));
+  allBtns.forEach(b   => b.classList.remove('active'));
+  allModules[index].classList.add('active');
+  allBtns[index].classList.add('active');
+  window.scrollTo({ top: document.querySelector('.layout').offsetTop, behavior: 'smooth' });
+  if (voiceEnabled) {
+    setTimeout(() => readCurrentModule(), 700);
+  }
+}
+
+// ── Inicialización ────────────────────────────────
+if (synth.onvoiceschanged !== undefined) {
+  synth.onvoiceschanged = () => { selectedVoice = getSpanishVoice(); };
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    selectedVoice = getSpanishVoice();
+    if (voiceEnabled) readCurrentModule();
+  }, 1200);
+});
+</script>
+</body>
+</html>
